@@ -1,4 +1,4 @@
-# 🐻 Bear Type Scorer
+# 🐻 BearPaw Type Scorer
 
 ## 📝 Overview
 
