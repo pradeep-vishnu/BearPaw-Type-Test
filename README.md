@@ -32,13 +32,12 @@ You only need a modern web browser (Chrome, Firefox, Edge, Safari).
 
 1.  **Clone the repository** (or download the file):
     ```bash
-    git clone [https://github.com/your-username/bear-type-scorer.git](https://github.com/your-username/bear-type-scorer.git)
+    git clone https://github.com/pradeep-vishnu/BearPaw-Type-Test.git
     ```
 2.  **Open the file:** Navigate to the cloned directory and open the `index.html` (or similar) file directly in your web browser.
 
     ```bash
-    # Assuming the main file is named index.html
-    open index.html 
+    open type_test.html 
     ```
 3.  **Start Typing!** The application is ready to use immediately.
 
