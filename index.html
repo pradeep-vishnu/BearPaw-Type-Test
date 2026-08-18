@@ -200,6 +200,20 @@
             color: #4a9eff;
         }
 
+        #capsWarning {
+            display: none;
+            color: #1a1a1a;
+            background: #ffaa00;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.4);
+            animation: pulseUrgent 1s infinite alternate;
+        }
+
         .typing-area {
             flex: 1;
             background: #1a1a1a;
@@ -828,6 +842,62 @@
             color: #aaa;
             font-weight: bold;
         }
+
+        .mobile-warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .mobile-warning-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .mobile-warning-content {
+            background: #1a1a1a;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #4a9eff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mobile-warning-modal.active .mobile-warning-content {
+            transform: scale(1);
+        }
+
+        .mobile-warning-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .mobile-warning-title {
+            color: #4a9eff;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .mobile-warning-desc {
+            color: #ccc;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
         
         @media (max-width: 950px) {
             body {
@@ -856,6 +926,15 @@
     </style>
 </head>
 <body class="scroll-blocked">
+    
+    <div class="mobile-warning-modal" id="mobileWarningModal">
+        <div class="mobile-warning-content">
+            <div class="mobile-warning-icon">⌨️</div>
+            <h2 class="mobile-warning-title">Keyboard Required</h2>
+            <p class="mobile-warning-desc">Unfortunately, this test would not work without an external keyboard.</p>
+        </div>
+    </div>
+
     <div class="username-modal" id="usernameModal">
         <div class="username-form">
             <h2>🐻 Welcome to RoarWPM!</h2>
@@ -926,6 +1005,7 @@
                     </div>
                 </div>
 
+                <div id="capsWarning">⚠️ WARNING: CAPS Lock is ON</div>
                 <div class="typing-area" id="typingArea"></div>
 
                 <div class="controls">
@@ -1024,6 +1104,19 @@
         const timerProgress = document.getElementById('timerProgress');
         const badgesGrid = document.getElementById('badgesGrid');
         const newBadgesContainer = document.getElementById('newBadgesContainer');
+        const capsWarning = document.getElementById('capsWarning');
+        const mobileWarningModal = document.getElementById('mobileWarningModal');
+
+        function checkDeviceCompatibility() {
+            const isTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+            const isSmallScreen = window.innerWidth <= 950;
+            
+            if (isTouch && isSmallScreen) {
+                mobileWarningModal.classList.add('active');
+            } else {
+                mobileWarningModal.classList.remove('active');
+            }
+        }
 
         function autoFitScreen() {
             if (!appWrapper) return;
@@ -1037,6 +1130,7 @@
             if (scale > 1) scale = 1;
             
             appWrapper.style.transform = `scale(${scale})`;
+            checkDeviceCompatibility();
         }
         window.addEventListener('resize', autoFitScreen);
 
@@ -1620,6 +1714,12 @@
         }
 
         document.addEventListener('keydown', (e) => {
+            if (e.getModifierState && e.getModifierState('CapsLock')) {
+                capsWarning.style.display = 'block';
+            } else {
+                capsWarning.style.display = 'none';
+            }
+
             if (!usernameModal.classList.contains('hidden') || !resultsModal.classList.contains('hidden') || !achievementModal.classList.contains('hidden')) {
                 return;
             }
@@ -1674,6 +1774,14 @@
                 }
                 
                 updateStats();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.getModifierState && e.getModifierState('CapsLock')) {
+                capsWarning.style.display = 'block';
+            } else {
+                capsWarning.style.display = 'none';
             }
         });
         
@@ -1762,6 +1870,7 @@
             }
         });
 
+        checkDeviceCompatibility();
         loadUsername();
         autoFitScreen();
         initTest();
