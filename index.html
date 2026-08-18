@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐻 BearPaw Type Scorer</title>
+    <title>BearPaw Type Scorer</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐻</text></svg>">
     <style>
         * {
@@ -17,33 +17,28 @@
             color: #fff;
             font-family: 'Courier New', monospace;
             padding: 20px;
-            /* NEW: Enable smooth scrolling and hide horizontal overflow */
             overflow-x: hidden; 
             transition: background 0.8s ease-in-out; 
-            /* MODIFIED: Ensure body is scroll-blocked by default */
             overflow-y: hidden;
             height: 100vh;
         }
 
-        /* NEW: Scroll block class - primary control */
         body.scroll-blocked {
             overflow: hidden !important;
         }
         
-        /* NEW: Mode after test is closed (allows scrolling to dashboard) */
         body.goodbye-mode {
             overflow-y: auto !important;
-            height: auto; /* Allows document height to expand and scroll normally */
+            height: auto;
             background: #1a1a1a;
         }
 
-        /* MODIFIED: The main container gets the fly-away animation */
         @keyframes flyAway {
             0% { transform: translateY(0) rotateZ(0); opacity: 1; }
             100% { transform: translateY(-100vh) rotateZ(5deg); opacity: 0; }
         }
         
-        .container.fly-away { /* Target the container, not the body */
+        .container.fly-away {
             animation: flyAway 0.8s ease-in-out forwards;
         }
 
@@ -52,7 +47,6 @@
             margin: 0 auto;
             display: flex;
             gap: 30px;
-            /* NEW: Give container position for z-index management with the scrolling effect */
             position: relative;
             z-index: 100;
         }
@@ -76,7 +70,6 @@
             color: #4a9eff;
         }
 
-        /* Styling for the Timer Slider */
         .timer-setting {
             margin-bottom: 30px;
             padding: 10px 0;
@@ -117,7 +110,6 @@
             background: #4a9eff;
             cursor: pointer;
         }
-        /* End of Timer Slider Styling */
 
         .speed-meter {
             background: #1a1a1a;
@@ -195,7 +187,6 @@
             color: #4a9eff;
         }
 
-        /* MODIFIED: Fixed height for typing area for consistent 3-line display */
         .typing-area {
             background: #1a1a1a;
             padding: 30px; 
@@ -204,7 +195,7 @@
             line-height: 2.2;
             letter-spacing: 2px;
             margin-bottom: 30px;
-            height: 180px; /* Fixed height for 3 lines of text */
+            height: 180px;
             position: relative;
             overflow: hidden; 
         }
@@ -274,7 +265,6 @@
             cursor: not-allowed;
         }
 
-        /* History and Sidebar Styles (Existing) */
         .history-item {
             background: #2a2a2a;
             padding: 15px;
@@ -315,7 +305,6 @@
             padding: 20px;
         }
 
-        /* Username Modal (Existing) */
         .username-modal {
             position: fixed;
             top: 0;
@@ -339,9 +328,35 @@
             border-radius: 15px;
             text-align: center;
             max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #usernameInput {
+            background: #000000;
+            color: #00ff00;
+            caret-color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            border: 1px solid #00ff00;
+            padding: 10px 15px;
+            border-radius: 6px;
+            outline: none;
+            width: 100%;
+            margin-bottom: 25px;
+            animation: cursorBlink 1s infinite;
+        }
+
+        #usernameInput::placeholder {
+            color: #008800;
+        }
+
+        @keyframes cursorBlink {
+            0%, 49% { caret-color: #00ff00; }
+            50%, 100% { caret-color: transparent; }
         }
         
-        /* Results Modal Styles */
         .results-modal {
             position: fixed;
             top: 0;
@@ -400,16 +415,14 @@
             font-size: 2.2em;
         }
 
-        /* MODIFIED: Set fixed height for modal chart container to match historical chart */
         .chart-container-modal {
             background: #2a2a2a;
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-            height: 320px; /* NEW: Fixed height for chart area */
+            height: 320px;
         }
 
-        /* Modal Controls layout */
         .modal-controls {
             display: flex;
             gap: 20px;
@@ -421,7 +434,6 @@
             width: auto;
         }
         
-        /* Style for the Close button */
         #closeResultsBtn {
             background: #555; 
         }
@@ -430,18 +442,17 @@
             background: #777; 
         }
         
-        /* NEW: Goodbye Message and Dashboard Area */
         .goodbye-dashboard-container {
             position: relative; 
             width: 100%;
             min-height: 100vh;
-            display: none; /* Hide until activated */
+            display: none;
             flex-direction: column;
             align-items: center;
             padding-top: 5vh; 
             text-align: center;
-            background: #1a1a1a; /* Match sidebar/modal background */
-            margin-top: -20px; /* Counteract initial body padding */
+            background: #1a1a1a;
+            margin-top: -20px;
         }
 
         .goodbye-dashboard-container.active {
@@ -462,15 +473,14 @@
             color: #888;
         }
 
-        /* MODIFIED: Limit width of the historical chart container to match modal width */
         .historical-chart-container {
-            width: 90%; /* Match results-form width property */
-            max-width: 600px; /* Match results-form max-width property */
+            width: 90%;
+            max-width: 600px;
             background: #2a2a2a;
             padding: 30px;
             border-radius: 10px;
             margin-bottom: 50px;
-            height: 350px; /* NEW: Enforce a similar height (320px chart + 30px padding) */
+            height: 350px;
         }
         
         .historical-chart-container h3 {
@@ -478,11 +488,10 @@
             margin-bottom: 20px;
             font-size: 1.5em;
         }
-        /* NEW: Ensure the canvas takes up the max available height within the fixed container */
+
         #historyChartCanvas {
             max-height: 100%;
         }
-
     </style>
 </head>
 <body class="scroll-blocked">
@@ -594,9 +603,8 @@
         let recentWPMs = [];
         let testDuration = 60; 
         
-        // Get references to DOM elements
-        const body = document.body; // NEW
-        const mainContainer = document.getElementById('mainContainer'); // NEW ID
+        const body = document.body;
+        const mainContainer = document.getElementById('mainContainer');
         const usernameModal = document.getElementById('usernameModal');
         const usernameInput = document.getElementById('usernameInput');
         const resultsModal = document.getElementById('resultsModal');
@@ -606,11 +614,9 @@
         const tryNextBtn = document.getElementById('tryNextBtn');
         const closeResultsBtn = document.getElementById('closeResultsBtn');
         const typingArea = document.getElementById('typingArea');
-        // NEW Elements
         const goodbyeDashboardContainer = document.getElementById('goodbyeDashboardContainer');
         const goodbyeText = document.getElementById('goodbyeText');
         const historyChartCanvas = document.getElementById('historyChartCanvas');
-
 
         function generateWords(count) {
             let result = [];
@@ -644,7 +650,6 @@
         }
 
         function getVisibleWords() {
-            // Render up to 80 words from the starting index
             return currentText.slice(visibleStartIndex, visibleStartIndex + 80);
         }
 
@@ -674,11 +679,10 @@
             restartBtn.textContent = 'Start Test';
             timerSlider.disabled = false; 
             
-            // NEW: Ensure scroll is blocked when not active, and cleanup goodbye mode
             body.classList.add('scroll-blocked');
             body.classList.remove('goodbye-mode');
             mainContainer.classList.remove('fly-away');
-            mainContainer.style.display = ''; // Reset display style
+            mainContainer.style.display = '';
             goodbyeDashboardContainer.classList.remove('active');
             
             renderText();
@@ -692,7 +696,6 @@
             
             let charIndex = 0;
             for (let i = 0; i < visibleStartIndex; i++) {
-                // Account for words that are no longer visible, plus the space after each
                 charIndex += currentText[i].length + 1;
             }
             
@@ -716,7 +719,6 @@
                     charIndex++;
                 });
                 
-                // Add a space element (but not after the very last word)
                 if (typingArea.children.length < visibleWords.length) {
                     const spaceSpan = document.createElement('span');
                     spaceSpan.className = 'letter';
@@ -736,7 +738,6 @@
                 typingArea.appendChild(wordSpan);
             });
             
-            // Final check to ensure the cursor is on screen immediately after render
             if (currentPosition > 0) {
                  const currentLetterEl = document.querySelector(`[data-index="${currentPosition}"]`) || document.querySelector(`[data-index="${currentPosition - 1}"]`);
                  if (currentLetterEl && !currentLetterEl.classList.contains('current')) {
@@ -745,9 +746,7 @@
             }
         }
 
-        // Corrected Autoscroll Logic
         function updateVisibleText() {
-            // Find the currently focused letter element
             const currentLetterEl = document.querySelector(`.letter.current`);
             if (!currentLetterEl) return;
             
@@ -756,46 +755,35 @@
 
             const firstWordTop = visibleWordElements[0].offsetTop;
 
-            // 1. Find the starting index of the second line
             let startWordIndexOfSecondLine = 0; 
             for (let i = 1; i < visibleWordElements.length; i++) {
-                // Check if the current word's line top is greater than the first word's line top
                 if (visibleWordElements[i].offsetTop > firstWordTop) {
                     startWordIndexOfSecondLine = i;
                     break;
                 }
             }
 
-            if (startWordIndexOfSecondLine === 0) return; // Only one line is visible
+            if (startWordIndexOfSecondLine === 0) return;
 
-            // 2. Find the starting index of the third line (this is our scroll trigger point)
             const secondLineTop = visibleWordElements[startWordIndexOfSecondLine].offsetTop;
             let startWordIndexOfThirdLine = 0;
             for (let i = startWordIndexOfSecondLine + 1; i < visibleWordElements.length; i++) {
-                // Check if the current word's line top is greater than the second line's line top
                 if (visibleWordElements[i].offsetTop > secondLineTop) {
                     startWordIndexOfThirdLine = i;
                     break;
                 }
             }
 
-            // 3. Check if the current cursor is on or past the third visible line
             const currentCursorTop = currentLetterEl.offsetTop;
             
-            // Trigger scroll if the third line starts (startWordIndexOfThirdLine > 0) AND
-            // the cursor is vertically positioned on or after the start of that third line.
             if (startWordIndexOfThirdLine > 0 && currentCursorTop >= visibleWordElements[startWordIndexOfThirdLine].offsetTop) {
-                
-                // SCROLL TRIGGERED: Shift the visible start index by the number of words in the first line
                 visibleStartIndex += startWordIndexOfSecondLine;
                 renderText();
             }
 
-            // Load more text check: If the user is nearing the end of the currently generated text, generate more.
             const fullTextLength = currentText.join(' ').length;
             if (currentPosition >= fullTextLength - 50) {
                 currentText = currentText.concat(generateWords(30));
-                // Only re-render if a scroll wasn't already triggered (to avoid double render)
                 if (!(startWordIndexOfThirdLine > 0 && currentCursorTop >= visibleWordElements[startWordIndexOfThirdLine].offsetTop)) {
                     renderText();
                 }
@@ -862,14 +850,12 @@
                 timerInterval = setInterval(updateTimer, 100); 
                 restartBtn.textContent = 'Restart';
                 timerSlider.disabled = true; 
-                // NEW: Remove scroll block when test starts
                 body.classList.remove('scroll-blocked');
             }
         }
 
         function updateTimer() {
             const elapsed = (Date.now() - startTime) / 1000;
-            // Use testDuration here
             timeLeft = Math.max(0, testDuration - elapsed); 
             document.getElementById('timer').textContent = Math.ceil(timeLeft);
             
@@ -913,8 +899,6 @@
             };
             
             testHistory.unshift(testResult);
-            // We only keep the last 10 for the sidebar, but all for the historical chart
-            // if (testHistory.length > 10) testHistory.pop(); 
             
             saveHistory();
             loadHistory();
@@ -922,7 +906,6 @@
 
             restartBtn.textContent = 'Restart';
             timerSlider.disabled = false;
-            // NEW: Add scroll block after test ends
             body.classList.add('scroll-blocked');
         }
         
@@ -940,7 +923,6 @@
                 window.progressChart.destroy();
             }
             
-            // Filter WPM history to 1-second intervals for cleaner labels
             const filteredHistory = wpmHistory.filter((_, i) => Math.ceil(wpmHistory[i].time) !== Math.ceil(wpmHistory[i-1]?.time));
             
             window.progressChart = new Chart(ctx, {
@@ -979,19 +961,17 @@
             });
         }
         
-        let historicalWPMChart = null; // To store chart instance
+        let historicalWPMChart = null;
         function showHistoricalWPMChart() {
             if (historicalWPMChart) {
                 historicalWPMChart.destroy();
             }
             
-            // Reverse history so oldest is first for proper chart plotting (left to right)
             const reversedHistory = [...testHistory].reverse();
 
             const labels = reversedHistory.map((_, index) => `Test ${index + 1}`);
             const data = reversedHistory.map(d => d.wpm);
             
-            // Create a specific color array for points: green for the latest (last element in reversed array)
             const pointBackgroundColors = data.map((_, index) => 
                 index === data.length - 1 ? '#00ff88' : '#4a9eff'
             );
@@ -1005,7 +985,7 @@
                         data: data,
                         borderColor: '#4a9eff',
                         backgroundColor: 'rgba(74, 158, 255, 0.1)',
-                        pointBackgroundColor: pointBackgroundColors, // Apply custom colors
+                        pointBackgroundColor: pointBackgroundColors,
                         pointRadius: 5,
                         pointHoverRadius: 7,
                         tension: 0.4,
@@ -1049,7 +1029,6 @@
             const saved = localStorage.getItem('typingTestHistory_' + username);
             if (saved) {
                 const data = JSON.parse(saved);
-                // Keep all history for the chart, but only use the most recent 10 for sidebar display.
                 testHistory = (data.testHistory || []); 
             }
             renderHistory();
@@ -1063,7 +1042,6 @@
                 return;
             }
             
-            // Only show the most recent 10 in the sidebar list
             const sidebarHistory = testHistory.slice(0, 10);
             
             historyList.innerHTML = sidebarHistory.map(test => {
@@ -1118,14 +1096,12 @@
 
                     const nextLetterEl = document.querySelector(`[data-index="${currentPosition}"]`);
                     if (nextLetterEl) {
-                        // Remove 'current' from the previous letter if it was a space/end of word
                         const prevLetterEl = document.querySelector(`[data-index="${currentPosition - 1}"]`);
                         if(prevLetterEl) prevLetterEl.classList.remove('current');
                         
                         nextLetterEl.classList.add('current');
                     }
                     
-                    // Crucial: call scrolling logic after moving position
                     updateVisibleText(); 
                     
                 } else {
@@ -1142,7 +1118,6 @@
             }
         });
         
-        // NEW: Event listener to block manual scrolling while the body has the 'scroll-blocked' class
         document.addEventListener('wheel', (e) => {
             if (body.classList.contains('scroll-blocked')) {
                 e.preventDefault();
@@ -1155,48 +1130,37 @@
             }
         }, { passive: false });
 
-
         restartBtn.addEventListener('click', initTest);
         
         tryNextBtn.addEventListener('click', () => {
             initTest(); 
         });
 
-        // MODIFIED FIX: Close button listener now triggers the "fly-away" animation and shows the goodbye message/dashboard
         closeResultsBtn.addEventListener('click', () => {
-            resultsModal.classList.add('hidden'); // Hide modal immediately
+            resultsModal.classList.add('hidden');
             
-            // 1. Prepare and activate the goodbye message
             goodbyeText.textContent = `SEE YOU LATER, ${username.toUpperCase()}! 🐻`;
             goodbyeDashboardContainer.classList.add('active');
             
-            // 2. Start the animation on the main content
             mainContainer.classList.add('fly-away'); 
             
-            // 3. Enable scrolling on the body and change mode immediately
             body.classList.remove('scroll-blocked');
             body.classList.add('goodbye-mode');
             
-            // 4. Render the historical chart if there is history
             if (testHistory.length > 0) {
                  showHistoricalWPMChart();
             }
             
-            // **CRITICAL FIX FOR INFINITE SCROLLING:** Wait for animation to finish (0.8s), 
-            // then remove the main container from the document flow and scroll directly to the dashboard.
             setTimeout(() => {
-                // Remove the container from the layout so its height no longer counts
                 mainContainer.style.display = 'none'; 
                 
-                // Use scrollIntoView which targets the element directly, stabilizing the scroll.
                 goodbyeDashboardContainer.scrollIntoView({
                     behavior: 'smooth',
-                    block: 'start' // Scroll until the element is at the top of the view
+                    block: 'start'
                 });
-            }, 800); // 800ms matches the flyAway CSS animation duration
+            }, 800);
         });
 
-        // Setup username modal
         const usernameBtn = document.getElementById('saveUsernameBtn');
         
         usernameBtn.onclick = saveUsername;
@@ -1207,7 +1171,6 @@
             }
         });
         
-        // Timer Slider Logic
         timerSlider.addEventListener('input', () => {
             testDuration = parseInt(timerSlider.value);
             
@@ -1228,7 +1191,6 @@
                 document.getElementById('timer').textContent = testDuration;
             }
         });
-
 
         loadUsername();
         initTest();
