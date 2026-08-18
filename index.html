@@ -49,19 +49,32 @@
             gap: 30px;
             position: relative;
             z-index: 100;
+            align-items: stretch;
         }
 
         .main-section {
             flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-wrapper {
+            width: 340px;
+            position: relative;
+            flex-shrink: 0;
         }
 
         .sidebar {
-            width: 300px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #1a1a1a;
             padding: 20px;
             border-radius: 10px;
-            max-height: 600px;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         h1 {
@@ -253,16 +266,39 @@
             border-radius: 8px;
             cursor: pointer;
             font-family: 'Courier New', monospace;
-            transition: background 0.3s;
+            transition: background 0.3s, opacity 0.3s;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background: #357abd;
         }
 
         button:disabled {
             background: #555;
             cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #historyList {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 5px;
+            min-height: 0;
+        }
+
+        #historyList::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #historyList::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        #historyList::-webkit-scrollbar-thumb {
+            background: #4a9eff;
+            border-radius: 4px;
         }
 
         .history-item {
@@ -439,7 +475,7 @@
         }
         
         #closeResultsBtn:hover {
-            background: #777; 
+            background: #ff4444; 
         }
         
         .goodbye-dashboard-container {
@@ -468,9 +504,27 @@
         }
         
         .scroll-instruction {
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             font-size: 1.2em;
             color: #888;
+        }
+
+        .restart-session-btn {
+            background: #00ff88;
+            color: #1a1a1a;
+            font-weight: bold;
+            font-size: 1.5em;
+            padding: 15px 40px;
+            border-radius: 8px;
+            margin-bottom: 50px;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .restart-session-btn:hover {
+            background: #00cc6a;
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
         }
 
         .historical-chart-container {
@@ -492,6 +546,192 @@
         #historyChartCanvas {
             max-height: 100%;
         }
+
+        .active-timer-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px auto;
+            display: none;
+        }
+
+        .active-timer-container.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swirl-timer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-bg {
+            fill: none;
+            stroke: #333;
+            stroke-width: 8;
+        }
+
+        .timer-progress {
+            fill: none;
+            stroke: #00ff88;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.1s linear, stroke 0.3s;
+            transform-origin: 50% 50%;
+        }
+
+        .timer-progress.swirling {
+            animation: swirlAnim 2s linear infinite;
+        }
+
+        @keyframes swirlAnim {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .timer-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: #fff;
+            z-index: 2;
+        }
+
+        .timer-text.urgent {
+            color: #ff4444;
+            animation: pulseUrgent 0.5s infinite alternate;
+        }
+
+        @keyframes pulseUrgent {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .achievements-section {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 0 0 auto;
+        }
+
+        .achievements-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #ffaa00;
+            text-align: center;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .badges-grid::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .badges-grid::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .badges-grid::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 4px;
+        }
+
+        .badge-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .badge-card.unlocked {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+            animation: badgeUnlockAnim 0.5s ease-out;
+        }
+
+        @keyframes badgeUnlockAnim {
+            0% { transform: scale(0.9); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .badge-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .badge-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+            filter: grayscale(100%);
+            opacity: 0.3;
+            transition: filter 0.5s, opacity 0.5s;
+        }
+
+        .badge-card.unlocked .badge-icon {
+            filter: grayscale(0%);
+            opacity: 1;
+            animation: bounce 0.5s;
+        }
+
+        .badge-title {
+            font-weight: bold;
+            color: #aaa;
+            margin-bottom: 3px;
+            font-size: 0.85em;
+            transition: color 0.3s;
+        }
+
+        .badge-card.unlocked .badge-title {
+            color: #fff;
+        }
+
+        .badge-desc {
+            font-size: 0.65em;
+            color: #888;
+            margin-bottom: 8px;
+            min-height: 24px;
+        }
+
+        .badge-progress-container {
+            width: 100%;
+            height: 6px;
+            background: #444;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .badge-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4a9eff, #00ff88);
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        .badge-progress-text {
+            font-size: 0.7em;
+            color: #aaa;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body class="scroll-blocked">
@@ -523,7 +763,7 @@
             </div>
             
             <div class="modal-controls">
-                <button id="closeResultsBtn">Close</button>
+                <button id="closeResultsBtn">End Session</button>
                 <button id="tryNextBtn">Try Next</button>
             </div>
         </div>
@@ -546,10 +786,6 @@
 
             <div class="stats">
                 <div class="stat-item">
-                    <div class="stat-label">TIME</div>
-                    <div class="stat-value" id="timer">60</div>
-                </div>
-                <div class="stat-item">
                     <div class="stat-label">WPM</div>
                     <div class="stat-value" id="wpm">0</div>
                 </div>
@@ -563,13 +799,28 @@
 
             <div class="controls">
                 <button id="restartBtn">Start Test</button>
+                <button id="showStatsBtn" disabled>Show Last Stats</button>
             </div>
-            
         </div>
 
-        <div class="sidebar">
-            <h2 id="sidebarTitle">Your Scores</h2>
-            <div id="historyList"></div>
+        <div class="sidebar-wrapper">
+            <div class="sidebar">
+                <div class="active-timer-container" id="activeTimerContainer">
+                    <svg class="swirl-timer" viewBox="0 0 100 100">
+                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <div class="timer-text" id="activeTimerText">60</div>
+                </div>
+                <h2 id="sidebarTitle">Your Scores</h2>
+                
+                <div id="historyList"></div> 
+                
+                <div class="achievements-section">
+                    <h2>🏆 Achievements</h2>
+                    <div class="badges-grid" id="badgesGrid"></div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -577,6 +828,8 @@
         <h2 id="goodbyeText">SEE YOU LATER!</h2>
         <p class="scroll-instruction">(Return often hero your progress quest just keeps getting better!🚀)</p>
         
+        <button id="restartSessionBtn" class="restart-session-btn">Restart Session</button>
+
         <div class="historical-chart-container">
             <h3> WPM History</h3>
             <canvas id="historyChartCanvas"></canvas>
@@ -586,6 +839,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
         const words = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us"];
+
+        const ACHIEVEMENTS = [
+            { id: 'first_test', title: 'Novice Typist', desc: 'Complete your first test', icon: '🥚', target: 1, type: 'tests' },
+            { id: 'dedicated', title: 'Dedicated Bear', desc: 'Complete 10 tests', icon: '🐾', target: 10, type: 'tests' },
+            { id: 'speed_60', title: 'Speed Demon', desc: 'Reach 60 WPM', icon: '🏎️', target: 60, type: 'wpm' },
+            { id: 'speed_100', title: 'Godlike Speed', desc: 'Reach 100 WPM', icon: '⚡', target: 100, type: 'wpm' },
+            { id: 'acc_1', title: 'Sharpshooter', desc: 'Get 100% Accuracy on a test', icon: '🎯', target: 1, type: 'perfect_tests' },
+            { id: 'acc_5', title: 'Flawless Master', desc: 'Get 100% Accuracy on 5 tests', icon: '💎', target: 5, type: 'perfect_tests' }
+        ];
 
         let username = '';
         let currentText = [];
@@ -611,12 +873,18 @@
         const timerSlider = document.getElementById('timerSlider');
         const timerLabel = document.getElementById('timerLabel');
         const restartBtn = document.getElementById('restartBtn');
+        const showStatsBtn = document.getElementById('showStatsBtn');
         const tryNextBtn = document.getElementById('tryNextBtn');
         const closeResultsBtn = document.getElementById('closeResultsBtn');
+        const restartSessionBtn = document.getElementById('restartSessionBtn');
         const typingArea = document.getElementById('typingArea');
         const goodbyeDashboardContainer = document.getElementById('goodbyeDashboardContainer');
         const goodbyeText = document.getElementById('goodbyeText');
         const historyChartCanvas = document.getElementById('historyChartCanvas');
+        const activeTimerContainer = document.getElementById('activeTimerContainer');
+        const activeTimerText = document.getElementById('activeTimerText');
+        const timerProgress = document.getElementById('timerProgress');
+        const badgesGrid = document.getElementById('badgesGrid');
 
         function generateWords(count) {
             let result = [];
@@ -667,7 +935,6 @@
             recentWPMs = [];
             lastWPM = 0;
             
-            document.getElementById('timer').textContent = testDuration;
             document.getElementById('wpm').textContent = '0';
             document.getElementById('accuracy').textContent = '100%';
             resultsModal.classList.add('hidden'); 
@@ -685,6 +952,12 @@
             mainContainer.style.display = '';
             goodbyeDashboardContainer.classList.remove('active');
             
+            activeTimerContainer.classList.remove('visible');
+            timerProgress.style.strokeDashoffset = '0';
+            timerProgress.classList.remove('swirling');
+            activeTimerText.classList.remove('urgent');
+            timerProgress.style.stroke = '#00ff88';
+
             renderText();
             loadHistory();
         }
@@ -850,15 +1123,37 @@
                 timerInterval = setInterval(updateTimer, 100); 
                 restartBtn.textContent = 'Restart';
                 timerSlider.disabled = true; 
+                showStatsBtn.disabled = true;
                 body.classList.remove('scroll-blocked');
+
+                activeTimerContainer.classList.add('visible');
+                timerProgress.classList.add('swirling');
+                activeTimerText.textContent = testDuration;
             }
         }
 
         function updateTimer() {
             const elapsed = (Date.now() - startTime) / 1000;
             timeLeft = Math.max(0, testDuration - elapsed); 
-            document.getElementById('timer').textContent = Math.ceil(timeLeft);
             
+            activeTimerText.textContent = Math.ceil(timeLeft);
+            const dashoffset = 283 - (283 * (timeLeft / testDuration));
+            timerProgress.style.strokeDashoffset = dashoffset;
+            
+            if (timeLeft <= 10) {
+                timerProgress.style.stroke = '#ff4444';
+                activeTimerText.classList.add('urgent');
+                timerProgress.style.animationDuration = '0.5s';
+            } else if (timeLeft <= testDuration / 2) {
+                timerProgress.style.stroke = '#ffaa00';
+                activeTimerText.classList.remove('urgent');
+                timerProgress.style.animationDuration = '1s';
+            } else {
+                timerProgress.style.stroke = '#00ff88';
+                activeTimerText.classList.remove('urgent');
+                timerProgress.style.animationDuration = '2s';
+            }
+
             if (timeLeft <= 0) {
                 if(isTestActive) {
                     endTest();
@@ -888,6 +1183,9 @@
             clearInterval(timerInterval);
             isTestActive = false;
             
+            timerProgress.classList.remove('swirling');
+            activeTimerText.classList.remove('urgent');
+
             const finalWPM = calculateWPM();
             const finalAccuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 100;
             
@@ -906,6 +1204,7 @@
 
             restartBtn.textContent = 'Restart';
             timerSlider.disabled = false;
+            showStatsBtn.disabled = false;
             body.classList.add('scroll-blocked');
         }
         
@@ -923,12 +1222,17 @@
                 window.progressChart.destroy();
             }
             
+            let chartDuration = testDuration;
+            if (wpmHistory.length > 0) {
+                chartDuration = Math.max(...wpmHistory.map(d => d.time));
+            }
+            
             const filteredHistory = wpmHistory.filter((_, i) => Math.ceil(wpmHistory[i].time) !== Math.ceil(wpmHistory[i-1]?.time));
             
             window.progressChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: filteredHistory.map(d => (testDuration - d.time).toFixed(0) + 's'),
+                    labels: filteredHistory.map(d => (chartDuration - d.time).toFixed(0) + 's'),
                     datasets: [{
                         label: 'WPM',
                         data: filteredHistory.map(d => d.wpm),
@@ -1020,6 +1324,37 @@
             });
         }
 
+        function checkAchievements() {
+            const totalTests = testHistory.length;
+            const maxWPM = testHistory.length > 0 ? Math.max(...testHistory.map(t => t.wpm)) : 0;
+            const perfectTests = testHistory.filter(t => t.accuracy === 100).length;
+
+            badgesGrid.innerHTML = '';
+
+            ACHIEVEMENTS.forEach(ach => {
+                let current = 0;
+                if (ach.type === 'tests') current = totalTests;
+                if (ach.type === 'wpm') current = maxWPM;
+                if (ach.type === 'perfect_tests') current = perfectTests;
+
+                const isUnlocked = current >= ach.target;
+                const progressPercent = Math.min((current / ach.target) * 100, 100);
+
+                const card = document.createElement('div');
+                card.className = `badge-card ${isUnlocked ? 'unlocked' : ''}`;
+                card.innerHTML = `
+                    <div class="badge-icon">${ach.icon}</div>
+                    <div class="badge-title">${ach.title}</div>
+                    <div class="badge-desc">${ach.desc}</div>
+                    <div class="badge-progress-container">
+                        <div class="badge-progress-bar" style="width: ${progressPercent}%"></div>
+                    </div>
+                    <div class="badge-progress-text">${Math.min(current, ach.target)} / ${ach.target}</div>
+                `;
+                badgesGrid.appendChild(card);
+            });
+        }
+
         function saveHistory() {
             const data = { testHistory };
             localStorage.setItem('typingTestHistory_' + username, JSON.stringify(data));
@@ -1031,7 +1366,11 @@
                 const data = JSON.parse(saved);
                 testHistory = (data.testHistory || []); 
             }
+            
+            showStatsBtn.disabled = testHistory.length === 0;
+            
             renderHistory();
+            checkAchievements();
         }
 
         function renderHistory() {
@@ -1042,7 +1381,7 @@
                 return;
             }
             
-            const sidebarHistory = testHistory.slice(0, 10);
+            const sidebarHistory = testHistory.slice(0, 50);
             
             historyList.innerHTML = sidebarHistory.map(test => {
                 const date = new Date(test.date);
@@ -1118,19 +1457,15 @@
             }
         });
         
-        document.addEventListener('wheel', (e) => {
-            if (body.classList.contains('scroll-blocked')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchmove', (e) => {
-             if (body.classList.contains('scroll-blocked')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
         restartBtn.addEventListener('click', initTest);
+        
+        showStatsBtn.addEventListener('click', () => {
+            if (testHistory.length > 0) {
+                const latestTest = testHistory[0];
+                wpmHistory = latestTest.wpmHistory || [];
+                showResultsModal(latestTest.wpm, latestTest.accuracy);
+            }
+        });
         
         tryNextBtn.addEventListener('click', () => {
             initTest(); 
@@ -1161,6 +1496,18 @@
             }, 800);
         });
 
+        restartSessionBtn.addEventListener('click', () => {
+            goodbyeDashboardContainer.classList.remove('active');
+            body.classList.remove('goodbye-mode');
+            body.classList.add('scroll-blocked');
+            
+            mainContainer.style.display = '';
+            mainContainer.classList.remove('fly-away');
+            
+            window.scrollTo(0, 0); 
+            initTest();
+        });
+
         const usernameBtn = document.getElementById('saveUsernameBtn');
         
         usernameBtn.onclick = saveUsername;
@@ -1188,7 +1535,7 @@
             timerLabel.textContent = `Test Duration: ${displayTime.trim()}`;
             
             if (!isTestActive) {
-                document.getElementById('timer').textContent = testDuration;
+                activeTimerText.textContent = testDuration;
             }
         });
 
