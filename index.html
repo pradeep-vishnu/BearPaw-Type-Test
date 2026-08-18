@@ -997,6 +997,7 @@
         let lastWPM = 0;
         let recentWPMs = [];
         let testDuration = 60; 
+        let endTestClicked = false;
         
         const body = document.body;
         const appWrapper = document.getElementById('appWrapper');
@@ -1089,6 +1090,7 @@
             wpmHistory = [];
             recentWPMs = [];
             lastWPM = 0;
+            endTestClicked = false;
             
             document.getElementById('wpm').textContent = '0';
             document.getElementById('accuracy').textContent = '100%';
@@ -1341,9 +1343,10 @@
 
         function getUnlockedAchievementsList(historyObj) {
             if (!historyObj || historyObj.length === 0) return [];
-            const totalTests = historyObj.length;
-            const maxWPM = Math.max(...historyObj.map(t => t.wpm));
-            const perfectTests = historyObj.filter(t => t.accuracy === 100).length;
+            const validHistory = historyObj.filter(t => !t.endTestClicked);
+            const totalTests = validHistory.length;
+            const maxWPM = validHistory.length > 0 ? Math.max(...validHistory.map(t => t.wpm)) : 0;
+            const perfectTests = validHistory.filter(t => t.accuracy === 100).length;
 
             const unlocked = [];
             ACHIEVEMENTS.forEach(ach => {
@@ -1373,7 +1376,8 @@
                 date: new Date().toISOString(),
                 wpm: finalWPM,
                 accuracy: finalAccuracy,
-                wpmHistory: [...wpmHistory]
+                wpmHistory: [...wpmHistory],
+                endTestClicked: endTestClicked
             };
             
             const prevUnlocked = getUnlockedAchievementsList(testHistory);
@@ -1540,9 +1544,10 @@
         }
 
         function checkAchievements() {
-            const totalTests = testHistory.length;
-            const maxWPM = testHistory.length > 0 ? Math.max(...testHistory.map(t => t.wpm)) : 0;
-            const perfectTests = testHistory.filter(t => t.accuracy === 100).length;
+            const validHistory = testHistory.filter(t => !t.endTestClicked);
+            const totalTests = validHistory.length;
+            const maxWPM = validHistory.length > 0 ? Math.max(...validHistory.map(t => t.wpm)) : 0;
+            const perfectTests = validHistory.filter(t => t.accuracy === 100).length;
 
             badgesGrid.innerHTML = '';
 
@@ -1691,6 +1696,7 @@
         restartBtn.addEventListener('click', initTest);
         
         endTestBtn.addEventListener('click', () => {
+            endTestClicked = true;
             endTest();
         });
 
