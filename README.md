@@ -40,7 +40,7 @@ The application includes a built-in badge system to reward typing milestones[cit
 
 ## 🛠️ How to Run
 
-Online: Click here : [RoarWPM by VP](https://todo)
+Online: Click here [RoarWPM by VP]([https://todo](https://pradeep-vishnu.github.io/roarwpm-type-test/))
 
 Locally: 
 1. Create a new file named `<file_name>.html`[cite: 1].
