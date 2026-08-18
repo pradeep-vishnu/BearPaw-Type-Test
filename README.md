@@ -31,7 +31,7 @@ The application includes a built-in badge system to reward typing milestones:
 
 ---
 
-## 💻 Technologies Used
+## 💻 Used
 
 * **HTML/CSS/JavaScript**: Built entirely with vanilla web technologies, utilizing CSS keyframe animations for dynamic visual effects.
 * **Chart.js (v3.9.1)**: Imported via CDN to render interactive performance graphs within the results modal and dashboard.
