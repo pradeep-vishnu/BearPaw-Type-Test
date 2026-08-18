@@ -16,11 +16,15 @@
             background: #2a2a2a;
             color: #fff;
             font-family: 'Courier New', monospace;
+            margin: 0;
             padding: 20px;
-            overflow-x: hidden; 
-            transition: background 0.8s ease-in-out; 
-            overflow-y: hidden;
             height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.8s ease-in-out; 
+            position: relative;
         }
 
         body.scroll-blocked {
@@ -28,23 +32,24 @@
         }
         
         body.goodbye-mode {
-            overflow-y: auto !important;
-            height: auto;
-            background: #1a1a1a;
+            background: #2a2a2a;
         }
 
         @keyframes flyAway {
-            0% { transform: translateY(0) rotateZ(0); opacity: 1; }
-            100% { transform: translateY(-100vh) rotateZ(5deg); opacity: 0; }
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120vh) scale(0.9) rotateZ(3deg); opacity: 0; }
         }
         
         .container.fly-away {
-            animation: flyAway 0.8s ease-in-out forwards;
+            animation: flyAway 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            pointer-events: none;
         }
 
         .container {
+            width: 100%;
             max-width: 1400px;
-            margin: 0 auto;
+            height: calc(100vh - 40px);
+            max-height: 850px;
             display: flex;
             gap: 30px;
             position: relative;
@@ -54,21 +59,20 @@
 
         .main-section {
             flex: 1;
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .sidebar-wrapper {
             width: 340px;
-            position: relative;
+            display: flex;
+            flex-direction: column;
             flex-shrink: 0;
         }
 
         .sidebar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            flex: 1;
             background: #1a1a1a;
             padding: 20px;
             border-radius: 10px;
@@ -201,6 +205,7 @@
         }
 
         .typing-area {
+            flex: 1;
             background: #1a1a1a;
             padding: 30px; 
             border-radius: 10px;
@@ -208,9 +213,12 @@
             line-height: 2.2;
             letter-spacing: 2px;
             margin-bottom: 30px;
-            height: 180px;
+            min-height: 180px;
             position: relative;
             overflow: hidden; 
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
         }
 
         .word {
@@ -250,7 +258,6 @@
 
         .controls {
             text-align: center;
-            margin-top: 20px;
         }
 
         .controls button {
@@ -272,6 +279,14 @@
         button:hover:not(:disabled) {
             background: #357abd;
         }
+        
+        #endTestBtn {
+            background: #ff4444;
+        }
+
+        #endTestBtn:hover:not(:disabled) {
+            background: #cc3333;
+        }
 
         button:disabled {
             background: #555;
@@ -280,7 +295,7 @@
         }
 
         #historyList {
-            flex: 1 1 auto;
+            flex: 1;
             overflow-y: auto;
             margin-bottom: 20px;
             padding-right: 5px;
@@ -479,20 +494,33 @@
         }
         
         .goodbye-dashboard-container {
-            position: relative; 
-            width: 100%;
-            min-height: 100vh;
+            position: absolute; 
+            width: 100%; 
+            max-width: 1400px;
+            height: calc(100vh - 40px);
+            max-height: 850px;
+            overflow-y: auto;
+            z-index: 50;
+            background: #1a1a1a;
+            border-radius: 10px;
             display: none;
             flex-direction: column;
             align-items: center;
-            padding-top: 5vh; 
-            text-align: center;
-            background: #1a1a1a;
-            margin-top: -20px;
+            justify-content: center;
+            padding: 40px;
+            opacity: 0;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
         .goodbye-dashboard-container.active {
             display: flex;
+            animation: fadeInDashboard 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation-delay: 0.2s; /* Give main container a headstart to fly away */
+        }
+
+        @keyframes fadeInDashboard {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         #goodbyeText {
@@ -501,12 +529,14 @@
             font-weight: bold;
             letter-spacing: 5px;
             margin-bottom: 20px;
+            text-align: center;
         }
         
         .scroll-instruction {
             margin-bottom: 30px;
             font-size: 1.2em;
             color: #888;
+            text-align: center;
         }
 
         .restart-session-btn {
@@ -519,6 +549,7 @@
             margin-bottom: 50px;
             transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            flex-shrink: 0;
         }
 
         .restart-session-btn:hover {
@@ -528,13 +559,13 @@
         }
 
         .historical-chart-container {
-            width: 90%;
-            max-width: 600px;
+            width: 100%;
+            max-width: 800px;
             background: #2a2a2a;
             padding: 30px;
             border-radius: 10px;
-            margin-bottom: 50px;
-            height: 350px;
+            height: 450px;
+            flex-shrink: 0;
         }
         
         .historical-chart-container h3 {
@@ -553,6 +584,7 @@
             height: 160px;
             margin: 0 auto 30px auto;
             display: none;
+            flex-shrink: 0;
         }
 
         .active-timer-container.visible {
@@ -617,7 +649,7 @@
             background: #2a2a2a;
             padding: 15px;
             border-radius: 10px;
-            flex: 0 0 auto;
+            flex-shrink: 0;
         }
 
         .achievements-section h2 {
@@ -731,6 +763,30 @@
             color: #aaa;
             font-weight: bold;
         }
+        
+        @media (max-width: 950px) {
+            body {
+                overflow-y: auto;
+                align-items: flex-start;
+                padding-top: 30px;
+            }
+            .container, .goodbye-dashboard-container {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+                position: relative;
+            }
+            .sidebar-wrapper {
+                width: 100%;
+            }
+            .typing-area {
+                min-height: 150px;
+                margin-bottom: 20px;
+            }
+            #historyList {
+                min-height: 200px;
+            }
+        }
 
     </style>
 </head>
@@ -768,6 +824,7 @@
             </div>
         </div>
     </div>
+    
     <div class="container" id="mainContainer">
         <div class="main-section">
             <h1>🐻 BearPaw Type Scorer by VP</h1>
@@ -800,6 +857,7 @@
             <div class="controls">
                 <button id="restartBtn">Start Test</button>
                 <button id="showStatsBtn" disabled>Show Last Stats</button>
+                <button id="endTestBtn" disabled>End Test</button>
             </div>
         </div>
 
@@ -874,6 +932,7 @@
         const timerLabel = document.getElementById('timerLabel');
         const restartBtn = document.getElementById('restartBtn');
         const showStatsBtn = document.getElementById('showStatsBtn');
+        const endTestBtn = document.getElementById('endTestBtn');
         const tryNextBtn = document.getElementById('tryNextBtn');
         const closeResultsBtn = document.getElementById('closeResultsBtn');
         const restartSessionBtn = document.getElementById('restartSessionBtn');
@@ -885,6 +944,24 @@
         const activeTimerText = document.getElementById('activeTimerText');
         const timerProgress = document.getElementById('timerProgress');
         const badgesGrid = document.getElementById('badgesGrid');
+
+        function syncSidebarHeight() {
+            const mainSection = document.querySelector('.main-section');
+            const sidebar = document.querySelector('.sidebar');
+            if (mainSection && sidebar && window.innerWidth > 950) {
+                const mainHeight = mainSection.offsetHeight;
+                sidebar.style.height = mainHeight + 'px';
+                sidebar.style.maxHeight = mainHeight + 'px';
+            } else if (sidebar) {
+                sidebar.style.height = 'auto';
+                sidebar.style.maxHeight = 'none';
+            }
+        }
+        
+        const resizeObserver = new ResizeObserver(() => {
+            syncSidebarHeight();
+        });
+        resizeObserver.observe(document.querySelector('.main-section'));
 
         function generateWords(count) {
             let result = [];
@@ -903,6 +980,7 @@
                 document.getElementById('sidebarTitle').textContent = username + "'s Scores";
                 loadHistory();
                 usernameInput.blur(); 
+                setTimeout(syncSidebarHeight, 100); 
             } else {
                 alert('Please enter a username!');
             }
@@ -945,6 +1023,8 @@
             
             restartBtn.textContent = 'Start Test';
             timerSlider.disabled = false; 
+            showStatsBtn.disabled = testHistory.length === 0;
+            endTestBtn.disabled = true;
             
             body.classList.add('scroll-blocked');
             body.classList.remove('goodbye-mode');
@@ -1124,6 +1204,7 @@
                 restartBtn.textContent = 'Restart';
                 timerSlider.disabled = true; 
                 showStatsBtn.disabled = true;
+                endTestBtn.disabled = false;
                 body.classList.remove('scroll-blocked');
 
                 activeTimerContainer.classList.add('visible');
@@ -1205,6 +1286,7 @@
             restartBtn.textContent = 'Restart';
             timerSlider.disabled = false;
             showStatsBtn.disabled = false;
+            endTestBtn.disabled = true;
             body.classList.add('scroll-blocked');
         }
         
@@ -1457,8 +1539,30 @@
             }
         });
         
+        document.addEventListener('wheel', (e) => {
+            if (goodbyeDashboardContainer.classList.contains('active')) return;
+            if (e.target.closest('#historyList') || e.target.closest('.badges-grid') || e.target.closest('.sidebar')) {
+                return; 
+            }
+            e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (goodbyeDashboardContainer.classList.contains('active')) return;
+            if (e.target.closest('#historyList') || e.target.closest('.badges-grid') || e.target.closest('.sidebar')) {
+                return; 
+            }
+            e.preventDefault();
+        }, { passive: false });
+
         restartBtn.addEventListener('click', initTest);
         
+        endTestBtn.addEventListener('click', () => {
+            if (isTestActive) {
+                endTest();
+            }
+        });
+
         showStatsBtn.addEventListener('click', () => {
             if (testHistory.length > 0) {
                 const latestTest = testHistory[0];
@@ -1479,33 +1583,15 @@
             
             mainContainer.classList.add('fly-away'); 
             
-            body.classList.remove('scroll-blocked');
-            body.classList.add('goodbye-mode');
-            
             if (testHistory.length > 0) {
                  showHistoricalWPMChart();
             }
-            
-            setTimeout(() => {
-                mainContainer.style.display = 'none'; 
-                
-                goodbyeDashboardContainer.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 800);
         });
 
         restartSessionBtn.addEventListener('click', () => {
             goodbyeDashboardContainer.classList.remove('active');
-            body.classList.remove('goodbye-mode');
-            body.classList.add('scroll-blocked');
-            
-            mainContainer.style.display = '';
             mainContainer.classList.remove('fly-away');
-            
-            window.scrollTo(0, 0); 
-            initTest();
+            setTimeout(initTest, 300); // Slight delay for smoother transition reset
         });
 
         const usernameBtn = document.getElementById('saveUsernameBtn');
