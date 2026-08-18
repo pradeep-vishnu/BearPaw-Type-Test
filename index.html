@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BearPaw Type Scorer</title>
+    <title>RoarWPM</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐻</text></svg>">
     <style>
         * {
@@ -17,27 +17,23 @@
             color: #fff;
             font-family: 'Courier New', monospace;
             margin: 0;
-            padding: 20px;
             height: 100vh;
             overflow: hidden;
+            transition: background 0.8s ease-in-out; 
+        }
+
+        #appWrapper {
+            width: 100vw;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.8s ease-in-out; 
-            position: relative;
-        }
-
-        body.scroll-blocked {
-            overflow: hidden !important;
-        }
-        
-        body.goodbye-mode {
-            background: #2a2a2a;
+            transform-origin: center center;
         }
 
         @keyframes flyAway {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-120vh) scale(0.9) rotateZ(3deg); opacity: 0; }
+            0% { transform: translate3d(0, 0, 0) scale3d(1, 1, 1) rotateZ(0); opacity: 1; }
+            100% { transform: translate3d(0, -120vh, 0) scale3d(0.8, 0.8, 1) rotateZ(5deg); opacity: 0; }
         }
         
         .container.fly-away {
@@ -46,15 +42,14 @@
         }
 
         .container {
-            width: 100%;
-            max-width: 1400px;
-            height: calc(100vh - 40px);
-            max-height: 850px;
+            width: 1400px;
+            height: 850px;
             display: flex;
             gap: 30px;
             position: relative;
             z-index: 100;
             align-items: stretch;
+            will-change: transform, opacity;
         }
 
         .main-section {
@@ -62,6 +57,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-width: 0;
         }
 
         .sidebar-wrapper {
@@ -407,8 +403,17 @@
             0%, 49% { caret-color: #00ff00; }
             50%, 100% { caret-color: transparent; }
         }
+
+        .results-modal:not(.hidden), .achievement-modal:not(.hidden) {
+            animation: fadeInModal 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         
-        .results-modal {
+        .results-modal, .achievement-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -421,7 +426,7 @@
             z-index: 1000;
         }
 
-        .results-modal.hidden {
+        .results-modal.hidden, .achievement-modal.hidden {
             display: none;
         }
 
@@ -492,14 +497,73 @@
         #closeResultsBtn:hover {
             background: #ff4444; 
         }
+
+        .achievement-celebration {
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .celebration-title {
+            font-size: 3.5em;
+            color: #ffaa00;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+            animation: pulseTitle 2s infinite alternate;
+        }
+
+        @keyframes pulseTitle {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .new-badges-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .new-badge {
+            background: #1a1a1a;
+            border: 2px solid #00ff88;
+            border-radius: 15px;
+            padding: 30px;
+            width: 220px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+            opacity: 0;
+            transform: scale(0) rotate(-540deg);
+            animation: swirlIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes swirlIn {
+            0% { transform: scale(0) rotate(-540deg); opacity: 0; }
+            100% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+        }
+
+        .new-badge-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+        }
+
+        .new-badge-title {
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .new-badge-desc {
+            color: #00ff88;
+            font-size: 1em;
+        }
         
         .goodbye-dashboard-container {
-            position: absolute; 
-            width: 100%; 
-            max-width: 1400px;
-            height: calc(100vh - 40px);
-            max-height: 850px;
-            overflow-y: auto;
+            position: absolute;
+            width: 1400px;
+            height: 850px;
             z-index: 50;
             background: #1a1a1a;
             border-radius: 10px;
@@ -510,17 +574,18 @@
             padding: 40px;
             opacity: 0;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            will-change: transform, opacity;
         }
 
         .goodbye-dashboard-container.active {
             display: flex;
             animation: fadeInDashboard 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            animation-delay: 0.2s; /* Give main container a headstart to fly away */
+            animation-delay: 0.1s;
         }
 
         @keyframes fadeInDashboard {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
+            0% { opacity: 0; transform: translate3d(0, 30px, 0) scale3d(0.95, 0.95, 1); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0) scale3d(1, 1, 1); }
         }
 
         #goodbyeText {
@@ -793,10 +858,18 @@
 <body class="scroll-blocked">
     <div class="username-modal" id="usernameModal">
         <div class="username-form">
-            <h2>🐻 Welcome to BearPaw Type!</h2>
+            <h2>🐻 Welcome to RoarWPM!</h2>
             <p style="margin-bottom: 20px; color: #888;">Enter your username to get started</p>
             <input type="text" id="usernameInput" placeholder="Your username" maxlength="20">
             <button id="saveUsernameBtn">Start Typing!</button>
+        </div>
+    </div>
+
+    <div class="achievement-modal hidden" id="achievementModal">
+        <div class="achievement-celebration">
+            <h2 class="celebration-title">🎉 Achievement Unlocked! 🎉</h2>
+            <div id="newBadgesContainer" class="new-badges-container"></div>
+            <button id="continueToResultsBtn">Continue to Results</button>
         </div>
     </div>
 
@@ -825,72 +898,74 @@
         </div>
     </div>
     
-    <div class="container" id="mainContainer">
-        <div class="main-section">
-            <h1>🐻 BearPaw Type Scorer by VP</h1>
-            
-            <div class="timer-setting">
-                <label for="timerSlider" id="timerLabel">Test Duration: 60s</label>
-                <input type="range" id="timerSlider" min="15" max="120" value="60" step="5">
+    <div id="appWrapper">
+        <div class="container" id="mainContainer">
+            <div class="main-section">
+                <h1>🐻 RoarWPM by VP</h1>
+                
+                <div class="timer-setting">
+                    <label for="timerSlider" id="timerLabel">Test Duration: 60s</label>
+                    <input type="range" id="timerSlider" min="15" max="120" value="60" step="5">
+                </div>
+
+                <div class="speed-meter">
+                    <div class="speed-bar-container">
+                        <div class="speed-bar" id="speedBar"></div>
+                    </div>
+                    <div class="speed-message" id="speedMessage">Start typing to see your speed!</div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">WPM</div>
+                        <div class="stat-value" id="wpm">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">ACCURACY</div>
+                        <div class="stat-value" id="accuracy">100%</div>
+                    </div>
+                </div>
+
+                <div class="typing-area" id="typingArea"></div>
+
+                <div class="controls">
+                    <button id="restartBtn">Start Test</button>
+                    <button id="showStatsBtn" disabled>Show Last Stats</button>
+                    <button id="endTestBtn">End Test</button>
+                </div>
             </div>
 
-            <div class="speed-meter">
-                <div class="speed-bar-container">
-                    <div class="speed-bar" id="speedBar"></div>
+            <div class="sidebar-wrapper">
+                <div class="sidebar">
+                    <div class="active-timer-container" id="activeTimerContainer">
+                        <svg class="swirl-timer" viewBox="0 0 100 100">
+                            <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div class="timer-text" id="activeTimerText">60</div>
+                    </div>
+                    <h2 id="sidebarTitle">Your Scores</h2>
+                    
+                    <div id="historyList"></div> 
+                    
+                    <div class="achievements-section">
+                        <h2>🏆 Achievements</h2>
+                        <div class="badges-grid" id="badgesGrid"></div>
+                    </div>
                 </div>
-                <div class="speed-message" id="speedMessage">Start typing to see your speed!</div>
-            </div>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-label">WPM</div>
-                    <div class="stat-value" id="wpm">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">ACCURACY</div>
-                    <div class="stat-value" id="accuracy">100%</div>
-                </div>
-            </div>
-
-            <div class="typing-area" id="typingArea"></div>
-
-            <div class="controls">
-                <button id="restartBtn">Start Test</button>
-                <button id="showStatsBtn" disabled>Show Last Stats</button>
-                <button id="endTestBtn" disabled>End Test</button>
             </div>
         </div>
-
-        <div class="sidebar-wrapper">
-            <div class="sidebar">
-                <div class="active-timer-container" id="activeTimerContainer">
-                    <svg class="swirl-timer" viewBox="0 0 100 100">
-                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
-                        <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
-                    </svg>
-                    <div class="timer-text" id="activeTimerText">60</div>
-                </div>
-                <h2 id="sidebarTitle">Your Scores</h2>
-                
-                <div id="historyList"></div> 
-                
-                <div class="achievements-section">
-                    <h2>🏆 Achievements</h2>
-                    <div class="badges-grid" id="badgesGrid"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="goodbye-dashboard-container" id="goodbyeDashboardContainer">
-        <h2 id="goodbyeText">SEE YOU LATER!</h2>
-        <p class="scroll-instruction">(Return often hero your progress quest just keeps getting better!🚀)</p>
         
-        <button id="restartSessionBtn" class="restart-session-btn">Restart Session</button>
+        <div class="goodbye-dashboard-container" id="goodbyeDashboardContainer">
+            <h2 id="goodbyeText">SEE YOU LATER!</h2>
+            <p class="scroll-instruction">(Return often hero your progress quest just keeps getting better!🚀)</p>
+            
+            <button id="restartSessionBtn" class="restart-session-btn">Restart Session</button>
 
-        <div class="historical-chart-container">
-            <h3> WPM History</h3>
-            <canvas id="historyChartCanvas"></canvas>
+            <div class="historical-chart-container">
+                <h3> WPM History</h3>
+                <canvas id="historyChartCanvas"></canvas>
+            </div>
         </div>
     </div>
 
@@ -924,10 +999,12 @@
         let testDuration = 60; 
         
         const body = document.body;
+        const appWrapper = document.getElementById('appWrapper');
         const mainContainer = document.getElementById('mainContainer');
         const usernameModal = document.getElementById('usernameModal');
         const usernameInput = document.getElementById('usernameInput');
         const resultsModal = document.getElementById('resultsModal');
+        const achievementModal = document.getElementById('achievementModal');
         const timerSlider = document.getElementById('timerSlider');
         const timerLabel = document.getElementById('timerLabel');
         const restartBtn = document.getElementById('restartBtn');
@@ -935,6 +1012,7 @@
         const endTestBtn = document.getElementById('endTestBtn');
         const tryNextBtn = document.getElementById('tryNextBtn');
         const closeResultsBtn = document.getElementById('closeResultsBtn');
+        const continueToResultsBtn = document.getElementById('continueToResultsBtn');
         const restartSessionBtn = document.getElementById('restartSessionBtn');
         const typingArea = document.getElementById('typingArea');
         const goodbyeDashboardContainer = document.getElementById('goodbyeDashboardContainer');
@@ -944,24 +1022,22 @@
         const activeTimerText = document.getElementById('activeTimerText');
         const timerProgress = document.getElementById('timerProgress');
         const badgesGrid = document.getElementById('badgesGrid');
+        const newBadgesContainer = document.getElementById('newBadgesContainer');
 
-        function syncSidebarHeight() {
-            const mainSection = document.querySelector('.main-section');
-            const sidebar = document.querySelector('.sidebar');
-            if (mainSection && sidebar && window.innerWidth > 950) {
-                const mainHeight = mainSection.offsetHeight;
-                sidebar.style.height = mainHeight + 'px';
-                sidebar.style.maxHeight = mainHeight + 'px';
-            } else if (sidebar) {
-                sidebar.style.height = 'auto';
-                sidebar.style.maxHeight = 'none';
-            }
+        function autoFitScreen() {
+            if (!appWrapper) return;
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            const padding = 40;
+            const baseWidth = 1400 + padding;
+            const baseHeight = 850 + padding;
+            
+            let scale = Math.min(winWidth / baseWidth, winHeight / baseHeight);
+            if (scale > 1) scale = 1;
+            
+            appWrapper.style.transform = `scale(${scale})`;
         }
-        
-        const resizeObserver = new ResizeObserver(() => {
-            syncSidebarHeight();
-        });
-        resizeObserver.observe(document.querySelector('.main-section'));
+        window.addEventListener('resize', autoFitScreen);
 
         function generateWords(count) {
             let result = [];
@@ -980,7 +1056,7 @@
                 document.getElementById('sidebarTitle').textContent = username + "'s Scores";
                 loadHistory();
                 usernameInput.blur(); 
-                setTimeout(syncSidebarHeight, 100); 
+                autoFitScreen();
             } else {
                 alert('Please enter a username!');
             }
@@ -1009,6 +1085,7 @@
             totalChars = 0;
             timeLeft = testDuration; 
             isTestActive = false;
+            startTime = null;
             wpmHistory = [];
             recentWPMs = [];
             lastWPM = 0;
@@ -1016,6 +1093,7 @@
             document.getElementById('wpm').textContent = '0';
             document.getElementById('accuracy').textContent = '100%';
             resultsModal.classList.add('hidden'); 
+            achievementModal.classList.add('hidden');
             document.getElementById('speedMessage').textContent = 'Start typing to see your speed!';
             document.getElementById('speedBar').style.width = '0%';
             document.getElementById('speedBar').classList.remove('burst');
@@ -1024,7 +1102,7 @@
             restartBtn.textContent = 'Start Test';
             timerSlider.disabled = false; 
             showStatsBtn.disabled = testHistory.length === 0;
-            endTestBtn.disabled = true;
+            endTestBtn.disabled = false;
             
             body.classList.add('scroll-blocked');
             body.classList.remove('goodbye-mode');
@@ -1243,6 +1321,7 @@
         }
 
         function calculateWPM() {
+            if (!startTime) return 0;
             const elapsed = (Date.now() - startTime) / 1000 / 60;
             if (elapsed <= 0) return 0;
             const wpm = Math.round((correctChars / 5) / elapsed);
@@ -1258,6 +1337,26 @@
             
             wpmHistory.push({ time: testDuration - timeLeft, wpm: wpm });
             updateSpeedMeter();
+        }
+
+        function getUnlockedAchievementsList(historyObj) {
+            if (!historyObj || historyObj.length === 0) return [];
+            const totalTests = historyObj.length;
+            const maxWPM = Math.max(...historyObj.map(t => t.wpm));
+            const perfectTests = historyObj.filter(t => t.accuracy === 100).length;
+
+            const unlocked = [];
+            ACHIEVEMENTS.forEach(ach => {
+                let current = 0;
+                if (ach.type === 'tests') current = totalTests;
+                if (ach.type === 'wpm') current = maxWPM;
+                if (ach.type === 'perfect_tests') current = perfectTests;
+
+                if (current >= ach.target) {
+                    unlocked.push(ach.id);
+                }
+            });
+            return unlocked;
         }
 
         function endTest() {
@@ -1277,19 +1376,53 @@
                 wpmHistory: [...wpmHistory]
             };
             
+            const prevUnlocked = getUnlockedAchievementsList(testHistory);
+            
             testHistory.unshift(testResult);
             
+            const currUnlocked = getUnlockedAchievementsList(testHistory);
+            const newUnlocks = currUnlocked.filter(id => !prevUnlocked.includes(id));
+
             saveHistory();
             loadHistory();
-            showResultsModal(finalWPM, finalAccuracy); 
 
             restartBtn.textContent = 'Restart';
             timerSlider.disabled = false;
             showStatsBtn.disabled = false;
-            endTestBtn.disabled = true;
+            endTestBtn.disabled = false;
             body.classList.add('scroll-blocked');
+
+            if (newUnlocks.length > 0) {
+                showAchievementCelebration(newUnlocks, finalWPM, finalAccuracy);
+            } else {
+                showResultsModal(finalWPM, finalAccuracy);
+            }
         }
         
+        function showAchievementCelebration(newUnlockIds, finalWPM, finalAccuracy) {
+            newBadgesContainer.innerHTML = '';
+
+            newUnlockIds.forEach((id, index) => {
+                const ach = ACHIEVEMENTS.find(a => a.id === id);
+                const badge = document.createElement('div');
+                badge.className = 'new-badge';
+                badge.style.animationDelay = `${index * 0.3}s`;
+                badge.innerHTML = `
+                    <div class="new-badge-icon">${ach.icon}</div>
+                    <div class="new-badge-title">${ach.title}</div>
+                    <div class="new-badge-desc">${ach.desc}</div>
+                `;
+                newBadgesContainer.appendChild(badge);
+            });
+
+            achievementModal.classList.remove('hidden');
+
+            continueToResultsBtn.onclick = () => {
+                achievementModal.classList.add('hidden');
+                showResultsModal(finalWPM, finalAccuracy);
+            };
+        }
+
         function showResultsModal(wpm, accuracy) {
             document.getElementById('finalWPM').textContent = wpm;
             document.getElementById('finalAccuracy').textContent = accuracy + '%';
@@ -1482,7 +1615,7 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (!usernameModal.classList.contains('hidden') || !resultsModal.classList.contains('hidden')) {
+            if (!usernameModal.classList.contains('hidden') || !resultsModal.classList.contains('hidden') || !achievementModal.classList.contains('hidden')) {
                 return;
             }
             
@@ -1558,9 +1691,7 @@
         restartBtn.addEventListener('click', initTest);
         
         endTestBtn.addEventListener('click', () => {
-            if (isTestActive) {
-                endTest();
-            }
+            endTest();
         });
 
         showStatsBtn.addEventListener('click', () => {
@@ -1591,7 +1722,7 @@
         restartSessionBtn.addEventListener('click', () => {
             goodbyeDashboardContainer.classList.remove('active');
             mainContainer.classList.remove('fly-away');
-            setTimeout(initTest, 300); // Slight delay for smoother transition reset
+            setTimeout(initTest, 300); 
         });
 
         const usernameBtn = document.getElementById('saveUsernameBtn');
@@ -1626,6 +1757,7 @@
         });
 
         loadUsername();
+        autoFitScreen();
         initTest();
     </script>
 </body>
