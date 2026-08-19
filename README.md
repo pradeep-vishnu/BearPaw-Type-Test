@@ -2,7 +2,7 @@
 
 # 🐻 RoarWPM </div>
 
-<div align="center"> <img width="800px" src="demo.png" alt="Demo Image"> </div>
+<div align="center"> <img width="1000px" src="demo.png" alt="Demo Image"> </div>
 
 <div align="center"> RoarWPM is an interactive, web-based typing speed test application designed to help users track and improve their typing speed and accuracy. Created by VP, this project features a clean dark-mode interface, gamified achievements, and detailed performance tracking.</div>
 
