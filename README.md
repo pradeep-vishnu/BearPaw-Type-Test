@@ -14,6 +14,7 @@ RoarWPM is an interactive, web-based typing speed test application designed to h
 * **Data Visualization**: Integrates Chart.js to generate line graphs that show your WPM progression during a specific test, as well as historical WPM trends across all your recorded tests.
 * **End Session Dashboard**: Ending a session triggers a dynamic "fly away" animation and reveals a goodbye screen featuring your overall WPM history chart.
 
+<td><img width="800px" src="demo.png"></td>  
 ---
 
 ## 🏆 Achievements to Unlock
